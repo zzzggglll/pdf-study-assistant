@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI 学习助手 · PDF 考点总结</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero__text">
+        <p class="eyebrow">PDF Study Assistant</p>
+        <h1>上传 PDF · 一键生成考点总结</h1>
+        <p class="lede">本地轻量级网页工具，帮你把课堂讲义与备课资料快速提炼成可复制的知识点清单。</p>
+        <div class="hero__meta">
+          <span>单文件 · 20MB 内</span>
+          <span>约 20 秒出结果</span>
+          <span>DashScope · qwen-turbo</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="panel">
+        <div class="upload" id="dropzone" role="button" tabindex="0" aria-controls="file-input">
+          <div class="upload__icon">⬆</div>
+          <div class="upload__text">
+            <strong>拖拽或点击上传 PDF</strong>
+            <p>支持单份文档，建议 10 页以内文字版 PDF。文件大小上限 20MB。</p>
+          </div>
+          <input id="file-input" type="file" accept="application/pdf">
+        </div>
+
+        <section class="preferences" aria-label="总结偏好设置">
+          <div class="preferences__header">
+            <h2>定制总结模式</h2>
+            <p>根据你的目标和使用场景，生成更贴近实际用途的学习结果。</p>
+          </div>
+
+          <div class="preferences__grid">
+            <fieldset class="choice-group">
+              <legend>你的目标</legend>
+              <div class="choice-group__options">
+                {% for option in goal_options %}
+                <label class="choice-card">
+                  <input
+                    type="radio"
+                    name="goal"
+                    value="{{ option.value }}"
+                    data-label="{{ option.label }}"
+                    {% if option.value == default_goal %}checked{% endif %}
+                  >
+                  <span class="choice-card__body">
+                    <span class="choice-card__title">{{ option.label }}</span>
+                    <span class="choice-card__desc">{{ option.description }}</span>
+                  </span>
+                </label>
+                {% endfor %}
+              </div>
+            </fieldset>
+
+            <fieldset class="choice-group">
+              <legend>使用场景</legend>
+              <div class="choice-group__options">
+                {% for option in scenario_options %}
+                <label class="choice-card">
+                  <input
+                    type="radio"
+                    name="scenario"
+                    value="{{ option.value }}"
+                    data-label="{{ option.label }}"
+                    {% if option.value == default_scenario %}checked{% endif %}
+                  >
+                  <span class="choice-card__body">
+                    <span class="choice-card__title">{{ option.label }}</span>
+                    <span class="choice-card__desc">{{ option.description }}</span>
+                  </span>
+                </label>
+                {% endfor %}
+              </div>
+            </fieldset>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button id="submit-btn" class="btn primary">生成考点总结</button>
+          <button id="reset-btn" class="btn ghost">清空</button>
+          <span class="hint" id="status-hint">准备就绪</span>
+        </div>
+
+        <div class="result">
+          <div class="result__header">
+            <div class="result__title">
+              <h2>生成结果</h2>
+              <p id="result-mode" class="result__mode">当前模式：{% for option in goal_options %}{% if option.value == default_goal %}{{ option.label }}{% endif %}{% endfor %} · {% for option in scenario_options %}{% if option.value == default_scenario %}{{ option.label }}{% endif %}{% endfor %}</p>
+            </div>
+            <button id="copy-btn" class="btn small">复制</button>
+          </div>
+          <pre id="result-box" class="result__body">等待上传并生成...</pre>
+        </div>
+
+        <div class="toast" id="toast" hidden></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
